@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="Joe Benassi">
+        <meta charset="utf-8">
+        <title>Impact History</title>
+
+        <!--<link rel="stylesheet" href="fonts/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">-->
+        <link rel="stylesheet" href="css/index.css">
+        <script src="js/main.js"></script>
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <script src="js/plugins/flot/jquery.flot.js"></script>
+        <script src="js/plugins/flot/flot-data.js"></script>
+    </head>
+    <body>
+        <h1>8 Count</h1>
+        <h2>History of Concussion Risk</h2>
+
+        <!-- the graph -->
+        <div class="historyChart">
+            <div class="historyChartContent" id="flot-line-chart"></div>
+        </div>
+        
+        <!-- the timeline selector -->
+        <div class="styledSelect">
+            <select>
+                <option value="week" selected>Week</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+            </select>
+        </div>
+    </body>
+</html>

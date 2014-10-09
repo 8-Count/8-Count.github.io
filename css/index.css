@@ -1,0 +1,96 @@
+html, body, h1, h2, h3, h4, ul, ol, li, p, a {
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, .timeTicker, button {
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+    font-weight: lighter;
+    color: #333333;
+}
+
+html {
+    font-size: 16px;
+    background-color: #EEEEEE;
+}
+
+body {
+    font-size: 62.5%;
+    color: #333333;
+    padding: 15;
+    text-align: center;
+    margin: 1em;
+}
+
+h1 {
+    font-size: 4.5em;
+    margin-bottom: -.2em;
+}
+
+h2, a, button {
+    font-size: 1.6em;
+}
+
+.riskMeter {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.timeTicker {
+    margin-top: .2em;
+    font-size: 1.26em;
+    margin-bottom: .2em;
+}
+
+button {
+    border: 0;
+    width: 100%;
+    border: 0;
+    margin: 0;
+    padding: .8em 1em;
+    background: #333333;
+    color: #EEE;
+    text-decoration: none;
+}
+
+button:active {
+    background: #999999;
+}
+
+.historyChart{
+    margin-top: 1em;
+    display: block;
+    height: 40vh;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.historyChartContent {
+    width: 100%;
+    height: 100%;
+    padding-bottom: 40vh;
+}
+
+.styledSelect {
+    margin-top: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 100%;
+    overflow: hidden;
+    background: url(../images/new_arrow.jpg) no-repeat right #ccc;
+    border: 2px solid #aaa;
+}
+
+.styledSelect select {
+    background: transparent;
+    padding-left: 50%;
+    padding-right: 50%;
+    font-size: 1.6em;
+    line-height: 1;
+    border: 0;
+    border-radius: 0;
+    height: 2.5em;
+    -webkit-appearance: none;
+}

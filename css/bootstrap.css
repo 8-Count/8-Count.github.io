@@ -928,7 +928,7 @@ hr {
 }
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 500;
+    font-weight: bold;
     line-height: 1.1;
     color: #317eac;
 }
@@ -952,7 +952,7 @@ h4 small, .h4 small, h5 small, .h5 small, h6 small, .h6 small, h4 .small, .h4 .s
     font-size: 75%;
 }
 h1, .h1 {
-    font-size: 36px;
+    font-size: 6em;
 }
 h2, .h2 {
     font-size: 30px;

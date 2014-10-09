@@ -69,15 +69,23 @@
                 else {
                     ctx.lineCap = 'butt';
                 }
-                ctx.arc(hw, hh, settings.diameter, 0, u);
-                ctx.stroke();
+                ctx.arc(hw, hh, settings.diameter, -1.57, u - 1.57);
+                if (a > 0) {
+                    ctx.stroke();
+                }
                 ctx.closePath();
                 if (settings.showText === true) {
                     ctx.fillStyle = settings.fontColor;
                     ctx.font = settings.fontSize + " " + settings.fontFamily;
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
-                    ctx.fillText(a + 1 + "%", hw, hh);
+
+                    var valueToPrint = a;
+                    if (a !== 0)
+                    {
+                        valueToPrint++;  
+                    }
+                    ctx.fillText(valueToPrint + "%", hw, hh);
                 }
             };
             setTimeout(function c() {
