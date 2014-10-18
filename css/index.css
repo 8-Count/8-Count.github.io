@@ -2,20 +2,13 @@ body, html {
     height: 100%;
     display: table; 
     width: 100%;
-    font-size: 15px;
+    font-size: 20px;
 }
 
 body {
     padding-top: 3em;
 }
 
-.navbar-brand {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    text-align: center;
-    margin: auto;
-}
     
 .btn-invis {
     background: transparent;
@@ -36,6 +29,36 @@ body {
     horizontal-align: middle; 
     text-align: center;
     padding: 3.5em;
+}
+
+.navbar-fixed-top {
+    min-height: 6em;
+}
+
+.navbar-brand {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: .2em 0 0 0;
+    font-size: 5em;
+}
+
+.navbar-nav {
+    margin-top: 1.5em;
+}
+
+.navbar-toggle .icon-bar {
+    width: 4em;
+    height: .5em;
+    margin: .6em 0 .6em 0;;
+}
+
+.navbar-nav li {
+    font-size: 2em;
+    padding-top: .4em;
+    padding-bottom: 0px;
+    line-height: 1.5em;
 }
 
 #connection_status {
@@ -66,4 +89,12 @@ body {
 
 #dropdownMenu1 {
     font-size: 1.5em;
+}
+
+#back_icon {
+    font-size: 4.1em;
+}
+
+#concussion_test_link {
+    font-size: 4em;
 }
