@@ -109,8 +109,9 @@ function setConnectionStatus(status) {
         connection_timer.visibility = "visible";
         dateTimeStartedListening = new Date();
         updateTimeElapsed();
-        connectionIcon = "fa fa-stop fa-5x";
-        connectionStatus = "Listening for dangerous impacts...";  
+        connectionIcon = "fa fa-pause fa-5x";
+        connectionStatus = "Listening for dangerous impacts...";
+        alert("Phone connected with device.");
     }
     else {
         connection_timer.visibility = "hidden";
@@ -126,11 +127,12 @@ function setConnectionStatus(status) {
         else {
             connectionIcon = "fa fa-exclamation-circle fa-5x";
             connectionStatus = "Conection failed. Tap to reconnect";
+            alert("Phone disconnected from device.");
         }
     }
     
     connection_icon.className = connectionIcon;
-    connection_status.innerHTML = connectionStatus;  
+    connection_status.innerHTML = connectionStatus;
 }
 
 function connectButtonClicked() {

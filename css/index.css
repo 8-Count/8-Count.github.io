@@ -41,7 +41,7 @@ body {
     left: 0;
     text-align: center;
     margin: .2em 0 0 0;
-    font-size: 5em;
+    font-size: 3.0em;
 }
 
 .navbar-nav {
@@ -49,9 +49,9 @@ body {
 }
 
 .navbar-toggle .icon-bar {
-    width: 4em;
-    height: .5em;
-    margin: .6em 0 .6em 0;;
+    width: 2.5em;
+    height: .20em;
+    margin: .50em 0 .50em 0;;
 }
 
 .navbar-nav li {
