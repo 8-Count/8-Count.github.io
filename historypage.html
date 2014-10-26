@@ -11,6 +11,7 @@
         
         <link href="http://bootswatch.com/superhero/bootstrap.min.css" rel="stylesheet">
         <link href="css/index.css" rel="stylesheet">
+        <link href="css/timeline.css" rel="stylesheet">
         <link href="fonts/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
         
     </head>
@@ -44,67 +45,51 @@
         <!--PAGE HEADER-->
         <h2>This Week's Impacts</h2>
         
-        <a id="concussion_test_link" href="#">Take Concussion Test</a>
-        
-        <!--MOST RECENT PANEL-->
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div clas="panel-title">
-                    Most Recent
+        <ul class="timeline">
+            <!-- SMALL RISK -->
+            <li>
+                <div class="timeline-badge smallrisk">
+                    <i class="fa fa-bolt fa-1x"></i>
                 </div>
-            </div>
-            <div class="panel-body" style="vertical-align:top">
-                [Formatting will change]
-                <span style="color:orange; display:block">2 minutes ago</span>
-                <!--
-                <div class="input-group">
-                    <span class="input-group-addon" style="color:#FF0000">
-                        <i class="fa fa-play fa-2x"></i>
-                    </span>
-                    <input class="form-control uneditable-input" placeholder="Username">
+                <div class="timeline-panel">
+                    <p class="timeline-title">12/10/2013</hp>
+                    <h5>Small Risk Impact</h5>
+                    <p><i class="fa fa-clock-o fa-1x"></i>11 hours ago</p>
                 </div>
-                -->
-            </div>
-        </div>
-        
-        <!--MOST DANGEROUS PANEL-->
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div clas="panel-title">
-                    Most Dangerous
+            </li>
+            
+            <!-- HIGH RISK -->
+            <li>
+                <div class="timeline-badge highrisk">
+                    <i class="fa fa-bolt fa-1x"></i>
                 </div>
-            </div>
-            <div class="panel-body">
-                [Formatting will change]
-                <span style="color:red; display:block">2 days 14 hours ago</span>
-                <span style="color:orange; display:block">2 minutes ago</span>
-                <span style="color:green; display:block">2 days 15 hours ago</span>
-            </div>
-        </div>
-        
-        <!--THIS WEEK'S COUNT PANEL-->
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div clas="panel-title">
-                    This Week's Impact Count
+                <div class="timeline-panel">
+                    <p>12/07/2013</p>
+                    <h5>High Risk Impact</h5>
+                    <p><i class="fa fa-clock-o fa-1x"></i>3 days ago</p>
                 </div>
-            </div>
-            <div class="panel-body">
-                [Formatting will change]
-                <span style="color:red; display:block">1</span>
-                <span style="color:orange; display:block">1</span>
-                <span style="color:green; display:block">4</span>
-            </div>
-        </div>
-        
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="js/jquery-1.11.1.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/functionlib.js"></script>
-        <script src="js/main.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="js/ie10-viewport-bug-workaround.js"></script>
+            </li>
+            
+            <!-- MEDIUM RISK -->
+            <li>
+                <div class="timeline-badge mediumrisk">
+                    <i class="fa fa-bolt fa-1x"></i>
+                </div>
+                <div class="timeline-panel">
+                    <p>12/02/2013</p>
+                    <h5>Medium Risk Impact</h5>
+                    <p><i class="fa fa-clock-o fa-1x"></i>8 days ago</p>
+                </div>
+            </li>
+
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="js/jquery-1.11.1.min.js"></script>
+            <script src="js/bootstrap.min.js"></script>
+            <script src="js/functionlib.js"></script>
+            <script src="js/main.js"></script>
+            <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+            <script src="js/ie10-viewport-bug-workaround.js"></script>
       </body>
 </html>
