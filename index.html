@@ -9,31 +9,40 @@
     
         <title>8 Count</title>
 
-        <link href="http://bootswatch.com/superhero/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/index.css" rel="stylesheet">
         <link href="fonts/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
     </head>
     <body>
+        
         <!--NAVBAR-->
-        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">8 Count</a>
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+ 
+                    <!--OPTIONS BUTTON-->
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <!--TITLE-->
+                    <a class="navbar-brand" href="#">8 Count</a>
+                </div>
+                
+                <!--OPTIONS LIST-->
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Concussion Exam</a></li>
+                        <li><a href="#">Get Concussion Help</a></li>
+                        <li><a href="#">App Info</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><span class="dropdown-item" href="#about">Concussion Exam</span></li>
-                    <li><span class="dropdown-item" href="#about">Get Concussion Help</span></li>
-                    <li><span class="dropdown-item" href="#about">App Info</span></li>
-                </ul>
-            </div>
-        </nav>
+        </div>
 
         <div class="centered-body">
             
