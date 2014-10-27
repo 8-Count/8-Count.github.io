@@ -48,19 +48,9 @@
             <!--CONNECTION TIMER-->
             <p id="connection_timer"></p>
 
-            <!--IMPACT HISTORY DROPDOWN NAV MENU-->
-            <div class="container" id="dropdown_menu_container">
-                <div class="dropdown" id="dropdown_menu">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        View Impact History
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation" onclick="todayClicked()"><span class="dropdown-item">  Today</span></li>
-                        <li role="presentation" onclick="weekClicked()"><span tabindex="-1" class="dropdown-item">  This Week</span></li>
-                        <li role="presentation" onclick="allTimeClicked()"><span tabindex="-1" class="dropdown-item">  All Time</span></li>
-                    </ul>
-                </div>
+            <!--IMPACT HISTORY BUTTON-->
+            <div class="container" id="impact_history_button">
+                <button type="button" class="btn btn-default btn-lg" onclick="todayClicked()">View Impact History</button>
             </div>
         </div>
 
