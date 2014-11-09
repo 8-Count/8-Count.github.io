@@ -19,7 +19,8 @@ bluetoothle.initialize(initializeSuccess, initializeError);
 
 function logData(message)
 {
-    SM = SM.concat(message);
+    SM = SM.concat(message).concat("\n");
+    alert(SM);
 }
 
 function initializeSuccess(obj)
