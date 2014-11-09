@@ -13,14 +13,13 @@ var reconnectTimer = null;
 var iOSPlatform = "iOS";
 var androidPlatform = "Android";
 
-bluetoothle.initialize(initializeSuccess, initializeError);
-
 var SM = "";
+
+bluetoothle.initialize(initializeSuccess, initializeError);
 
 function logData(message)
 {
     SM = SM.concat(message);
-    SM = SM.concat("\n");
 }
 
 function initializeSuccess(obj)
