@@ -15,8 +15,6 @@ var androidPlatform = "Android";
 
 var SM = "";
 
-bluetoothle.initialize(initializeSuccess, initializeError);
-
 function logData(message)
 {
     SM = SM.concat(message).concat("\n");

@@ -70,8 +70,15 @@
         <script src="lib/bootstrap.min.js"></script>
         <script src="lib/ie10-viewport-bug-workaround.js"></script>
         
-        <script src="js/functionlib.js"></script>
-        <script src="js/bluetooth.js"></script>
-        <script src="js/main.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="lib/bluetoothle.js"></script>
+        
+        <script type="text/javascript" src="js/functionlib.js"></script>
+        <script type="text/javascript" src="js/bluetooth.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        
+        <script type="text/javascript">
+            app.initialize();
+        </script>
     </body>
 </html>
