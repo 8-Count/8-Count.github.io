@@ -19,7 +19,8 @@ var SM = "";
 
 function logData(message)
 {
-    SM += "\n" + messsage;
+    SM = SM.concat(message);
+    SM = SM.concat("\n");
 }
 
 function initializeSuccess(obj)
