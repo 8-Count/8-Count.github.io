@@ -1,6 +1,7 @@
 var addressKey = "address";
 
 var heartRateServiceUuid = "180d";
+var humidityServiceUuid = "aa20";
 var heartRateMeasurementCharacteristicUuid = "2a37";
 var clientCharacteristicConfigDescriptorUuid = "2902";
 var batteryServiceUuid = "180f";
@@ -29,7 +30,7 @@ function initializeSuccess(obj)
     if (address == null)
     {
         logData("Bluetooth initialized successfully, starting scan for heart rate devices.");
-        var paramsObj = {"serviceUuids":[batteryServiceUuid]};
+        var paramsObj = {"serviceUuids":[humidityServiceUuid]};
         bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
     }
     else
