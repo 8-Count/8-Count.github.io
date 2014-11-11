@@ -221,7 +221,7 @@ function exploreService()
     if (window.device.platform == iOSPlatform)
     {
       logData("Discovering heart rate service");
-      var paramsObj = {"serviceUuids":[]};
+      var paramsObj = {"serviceUuids":[humidityServiceUuid]};
       bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
     }
     else if (window.device.platform == androidPlatform)
