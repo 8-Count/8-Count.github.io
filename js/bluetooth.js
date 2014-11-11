@@ -1,9 +1,9 @@
 var addressKey = "address";
 
 var heartRateServiceUuid = "180d";
-var humidityServiceUuid = "F000AA20-0451-4000-B000-00000000";
-var humidityReadingCharacteristicUuid = "F000AA21-0451-4000-B000-00000000";
-var humidityEnablingCharacteristicUiud = "F000AA22-0451-4000-B000-00000000";
+var humidityServiceUuid = "f000aa20-0451-4000-b000-00000000";
+var humidityReadingCharacteristicUuid = "f000aa21-0451-4000-b000-00000000";
+var humidityEnablingCharacteristicUiud = "f000aa22-0451-4000-b000-00000000";
 var heartRateMeasurementCharacteristicUuid = "2a37";
 var clientCharacteristicConfigDescriptorUuid = "2902";
 var batteryServiceUuid = "180f";
@@ -33,7 +33,7 @@ function initializeSuccess(obj)
     var address = window.localStorage.getItem(addressKey);
     if (address == null)
     {
-        logData("Bluetooth initialized successfully, starting scan for heart rate devices.");
+        logData("Bluetooth initialized successfully. Starting scan for BLE devices");
         var paramsObj = {"serviceUuids":[]};
         bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
     }
@@ -66,7 +66,7 @@ function startScanSuccess(obj)
   }
   else if (obj.status == "scanStarted")
   {
-    logData("Scan was started successfully, stopping in 10");
+    logData("Scan started successfully, stopping in 10s");
     scanTimer = setTimeout(scanTimeout, 10000);
   }
   else
@@ -225,7 +225,7 @@ function exploreService()
         : (navigator.userAgent.match(/Android/i)) == "Android" ? Device_Android 
         : "null";
     
-    logData("Device = " + deviceType);
+    logData("This device = " + deviceType);
     if (deviceType == Device_iPhone || 
         deviceType == Device_iPad
        )
@@ -290,14 +290,14 @@ function servicesHumiditySuccess(obj)
   }
     else
   {
-    logData("Unexpected services heart status: " + obj.status);
+    logData("Unexpected services status: " + obj.status);
   }
   disconnectDevice();
 }
 
 function servicesHumidityError(obj)
 {
-  logData("Services humidity error: " + obj.error + " - " + obj.message);
+  logData("Services discovery failure: " + obj.error + " - " + obj.message);
   disconnectDevice();
 }
 
