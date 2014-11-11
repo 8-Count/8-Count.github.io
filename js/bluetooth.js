@@ -230,13 +230,13 @@ function exploreService()
         deviceType == Device_iPad
        )
     {
-      logData("Discovering humidity service");
+      logData("iOS services discovering - attempting");
       var paramsObj = {"serviceUuids":[]};
       bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
     }
     else if (deviceType == Device_Android)
     {
-      logData("Beginning discovery");
+      logData("Android services discovering - attempting");
       bluetoothle.discover(discoverSuccess, discoverError);
     }
 }
@@ -267,7 +267,7 @@ function clearReconnectTimeout()
 
 function servicesHumiditySuccess(obj)
 {
-  logData("Services humidity success");
+  logData("iOS services discovering - success");
   if (obj.status == "discoveredServices")
   {
     var serviceUuids = obj.serviceUuids;
@@ -275,7 +275,7 @@ function servicesHumiditySuccess(obj)
     {
       var serviceUuid = serviceUuids[i];
 
-      logData(serviceUuid);
+      logData("Service " + i + ": UUID = " + serviceUuid);
       /**
       if (serviceUuid == heartRateServiceUuid)
       {
