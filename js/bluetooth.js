@@ -1,7 +1,7 @@
 var addressKey = "address";
 
 var heartRateServiceUuid = "180d";
-var humidityServiceUuid = "f100AA20-0451-4000-B000-00000000";
+var humidityServiceUuid = "AA20";
 var heartRateMeasurementCharacteristicUuid = "2a37";
 var clientCharacteristicConfigDescriptorUuid = "2902";
 var batteryServiceUuid = "180f";
