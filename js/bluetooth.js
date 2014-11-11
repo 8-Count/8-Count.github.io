@@ -13,8 +13,10 @@ var scanTimer = null;
 var connectTimer = null;
 var reconnectTimer = null;
 
-var iOSPlatform = "iOS";
-var androidPlatform = "Android";
+/** PLATFORMS **/
+var Device_iPad = "iPad";
+var Device_iPhone = "iPhone";
+var Device_Android = "Android";
 
 var SM = "";
 
@@ -218,17 +220,21 @@ function reconnectSuccess(obj)
 
 function exploreService()
 {
-    logData("exploreService entered");
-    var deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "null";
+    var deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? Device_iPad 
+        : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? Device_iPhone 
+        : (navigator.userAgent.match(/Android/i)) == "Android" ? Device_Android 
+        : "null";
     
-    logData("platform = " + deviceType);
-    if (1 /*window.device.platform == iOSPlatform*/)
+    logData("Device = " + deviceType);
+    if (deviceType == Device_iPhone || 
+        deviceType == Device_iPad
+       )
     {
-      logData("Discovering heart rate service");
-      var paramsObj = {"serviceUuids":[humidityServiceUuid]};
+      logData("Discovering humidity service");
+      var paramsObj = {"serviceUuids":[]};
       bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
     }
-    else if (window.device.platform == androidPlatform)
+    else if (deviceType == Device_Android)
     {
       logData("Beginning discovery");
       bluetoothle.discover(discoverSuccess, discoverError);
