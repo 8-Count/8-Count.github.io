@@ -2,7 +2,8 @@ var addressKey = "address";
 
 var heartRateServiceUuid = "180d";
 var humidityServiceUuid = "F000AA20-0451-4000-B000-00000000";
-var humidityCharacteristicUuid = "F000AA21-0451-4000-B000-00000000";
+var humidityReadingCharacteristicUuid = "F000AA21-0451-4000-B000-00000000";
+var humidityEnablingCharacteristicUiud = "F000AA22-0451-4000-B000-00000000";
 var heartRateMeasurementCharacteristicUuid = "2a37";
 var clientCharacteristicConfigDescriptorUuid = "2902";
 var batteryServiceUuid = "180f";
@@ -125,7 +126,7 @@ function connectSuccess(obj)
 
     clearConnectTimeout();
     //tempDisconnectDevice();
-    readHumidity(); //important
+    enableHumiditySensor(); //important
   }
   else if (obj.status == "connecting")
   {
@@ -445,14 +446,37 @@ function discoverError(obj)
   disconnectDevice();
 }
 
+/*********************/
+/** ENABLE HUMIDITY **/
+/*********************/
 
-
-
-/** NEW **/
-function readHumidity()
+function enableHumiditySensor()
 {
+    logData("Enabling humidity sensor");
+    var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityEnablingCharacteristicUiud};
+    bluetoothle.write(enableHumiditySensorWriteSuccess, enableHumiditySensorWriteError, paramsObj);
+}
+
+function enableHumiditySensorWriteSuccess(obj)
+{
+    logData("Write successful");
+    readHumidity();
+}
+
+function enableHumiditySensorWriteError(obj)
+{
+    logData("Write error: " + obj.error + " - " + obj.message);
+    disconnectDevice();
+}
+
+/*******************/
+/** READ HUMIDITY **/
+/*******************/
+
+function readHumidity()
+{    
     logData("Reading humidity");
-    var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityCharacteristicUiud};
+    var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityReadingCharacteristicUuid};
     bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
@@ -472,7 +496,7 @@ function readSuccess(obj)
     {
         var bytes = bluetoothle.encodedStringToBytes(obj.value);
         logData("Battery level: " + bytes[0]);
-        
+        disconnectDevice();
         /*
         logData("Subscribing to heart rate for 5 seconds");
         var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
