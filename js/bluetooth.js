@@ -30,7 +30,7 @@ function initializeSuccess(obj)
     if (address == null)
     {
         logData("Bluetooth initialized successfully, starting scan for heart rate devices.");
-        var paramsObj = {"serviceUuids":[humidityServiceUuid]};
+        var paramsObj = {"serviceUuids":[]};
         bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
     }
     else
