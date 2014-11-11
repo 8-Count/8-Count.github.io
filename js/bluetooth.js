@@ -126,7 +126,8 @@ function connectSuccess(obj)
 
     clearConnectTimeout();
     //tempDisconnectDevice();
-    enableHumiditySensor(); //important
+    //enableHumiditySensor(); //important
+    exploreService();
   }
   else if (obj.status == "connecting")
   {
@@ -202,17 +203,7 @@ function reconnectSuccess(obj)
 
     clearReconnectTimeout();
 
-    if (window.device.platform == iOSPlatform)
-    {
-      logData("Discovering heart rate service");
-      var paramsObj = {"serviceUuids":[heartRateServiceUuid]};
-      bluetoothle.services(servicesHeartSuccess, servicesHeartError, paramsObj);
-    }
-    else if (window.device.platform == androidPlatform)
-    {
-      logData("Beginning discovery");
-      bluetoothle.discover(discoverSuccess, discoverError);
-    }
+    exploreService()
   }
   else if (obj.status == "connecting")
   {
@@ -223,6 +214,21 @@ function reconnectSuccess(obj)
     logData("Unexpected reconnect status: " + obj.status);
     disconnectDevice();
   }
+}
+
+function exploreService()
+{
+    if (window.device.platform == iOSPlatform)
+    {
+      logData("Discovering heart rate service");
+      var paramsObj = {"serviceUuids":[]};
+      bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
+    }
+    else if (window.device.platform == androidPlatform)
+    {
+      logData("Beginning discovery");
+      bluetoothle.discover(discoverSuccess, discoverError);
+    }
 }
 
 function reconnectError(obj)
@@ -243,6 +249,46 @@ function clearReconnectTimeout()
   {
     clearTimeout(reconnectTimer);
   }
+}
+
+/******************/
+/** CUSTOM - iOS **/
+/******************/
+
+function servicesHumiditySuccess(obj)
+{
+  logData("Services humidity success");
+  if (obj.status == "discoveredServices")
+  {
+    var serviceUuids = obj.serviceUuids;
+    for (var i = 0; i < serviceUuids.length; i++)
+    {
+      var serviceUuid = serviceUuids[i];
+
+      logData(serviceUuid);
+      /**
+      if (serviceUuid == heartRateServiceUuid)
+      {
+        logData("Finding heart rate characteristics");
+        var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuids":[heartRateMeasurementCharacteristicUuid]};
+        bluetoothle.characteristics(characteristicsHeartSuccess, characteristicsHeartError, paramsObj);
+        return;
+      }
+      **/
+    }
+    //logData("Error: heart rate service not found");
+  }
+    else
+  {
+    logData("Unexpected services heart status: " + obj.status);
+  }
+  disconnectDevice();
+}
+
+function servicesHumidityError(obj)
+{
+  logData("Services humidity error: " + obj.error + " - " + obj.message);
+  disconnectDevice();
 }
 
 /*****************/
