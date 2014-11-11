@@ -203,7 +203,7 @@ function reconnectSuccess(obj)
 
     clearReconnectTimeout();
 
-    exploreService()
+    exploreService();
   }
   else if (obj.status == "connecting")
   {
@@ -218,6 +218,7 @@ function reconnectSuccess(obj)
 
 function exploreService()
 {
+    logData("exploreService entered");
     if (window.device.platform == iOSPlatform)
     {
       logData("Discovering heart rate service");
