@@ -1,8 +1,7 @@
 var addressKey = "address";
 
 var heartRateServiceUuid = "180d";
-var humidityServiceUuid = "F000AA20-0451-4000-B000-00000000";
-var humidityCharacteristicUuid = "F000AA21-0451-4000-B000-00000000"
+var humidityServiceUuid = "F0000";
 var heartRateMeasurementCharacteristicUuid = "2a37";
 var clientCharacteristicConfigDescriptorUuid = "2902";
 var batteryServiceUuid = "180f";
@@ -124,8 +123,13 @@ function connectSuccess(obj)
     logData("Connected to : " + obj.name + " - " + obj.address);
 
     clearConnectTimeout();
+<<<<<<< HEAD
     tempDisconnectDevice();
     //readHumidity(); //important
+=======
+
+    tempDisconnectDevice();
+>>>>>>> parent of f86145b... Organized code better. Attempting to get humidity data
   }
   else if (obj.status == "connecting")
   {
@@ -244,14 +248,6 @@ function clearReconnectTimeout()
   }
 }
 
-/*****************/
-/** HEART - iOS **/
-/*****************/
-
-/**************/
-/** SERVICES **/
-/**************/
-
 function servicesHeartSuccess(obj)
 {
   if (obj.status == "discoveredServices")
@@ -283,10 +279,6 @@ function servicesHeartError(obj)
   logData("Services heart error: " + obj.error + " - " + obj.message);
   disconnectDevice();
 }
-
-/***********/
-/** CHARS **/
-/***********/
 
 function characteristicsHeartSuccess(obj)
 {
@@ -320,10 +312,6 @@ function characteristicsHeartError(obj)
   disconnectDevice();
 }
 
-/**************/
-/** DESCRIPT **/
-/**************/
-
 function descriptorsHeartSuccess(obj)
 {
   if (obj.status == "discoveredDescriptors")
@@ -344,15 +332,6 @@ function descriptorsHeartError(obj)
   logData("Descriptors heart error: " + obj.error + " - " + obj.message);
   disconnectDevice();
 }
-
-
-/***************************/
-/****** BATTERY - iOS ******/
-/***************************/
-
-/**************/
-/** SERVICES **/
-/**************/
 
 function servicesBatterySuccess(obj)
 {
@@ -386,10 +365,6 @@ function servicesBatteryError(obj)
   disconnectDevice();
 }
 
-/***********/
-/** CHARS **/
-/***********/
-
 function characteristicsBatterySuccess(obj)
 {
   if (obj.status == "discoveredCharacteristics")
@@ -420,10 +395,6 @@ function characteristicsBatteryError(obj)
   disconnectDevice();
 }
 
-/***********************/
-/****** ANDROID ********/
-/***********************/
-
 function discoverSuccess(obj)
 {
     if (obj.status == "discovered")
@@ -445,20 +416,6 @@ function discoverError(obj)
   disconnectDevice();
 }
 
-
-
-
-/** NEW **/
-function readHumidity()
-{
-    logData("Reading humidity");
-    var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityCharacteristicUiud};
-    bluetoothle.read{readSuccess, readError, paramsObj);
-}
-
-
-
-
 function readBatteryLevel()
 {
   logData("Reading battery level");
@@ -472,7 +429,11 @@ function readSuccess(obj)
     {
         var bytes = bluetoothle.encodedStringToBytes(obj.value);
         logData("Battery level: " + bytes[0]);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> parent of f86145b... Organized code better. Attempting to get humidity data
         logData("Subscribing to heart rate for 5 seconds");
         var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
         bluetoothle.subscribe(subscribeSuccess, subscribeError, paramsObj);
