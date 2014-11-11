@@ -453,7 +453,7 @@ function readHumidity()
 {
     logData("Reading humidity");
     var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityCharacteristicUiud};
-    bluetoothle.read{readSuccess, readError, paramsObj);
+    bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
 
