@@ -22,7 +22,7 @@ var SM = "";
 
 function logData(message)
 {
-    SM = SM.concat(message).concat("\n");
+    SM = SM + message + "\n" + "----------" + "\n";
     alert(SM);
 }
 
