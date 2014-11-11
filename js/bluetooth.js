@@ -124,7 +124,8 @@ function connectSuccess(obj)
     logData("Connected to : " + obj.name + " - " + obj.address);
 
     clearConnectTimeout();
-    readHumidity(); //important
+    tempDisconnectDevice();
+    //readHumidity(); //important
   }
   else if (obj.status == "connecting")
   {
@@ -471,13 +472,11 @@ function readSuccess(obj)
     {
         var bytes = bluetoothle.encodedStringToBytes(obj.value);
         logData("Battery level: " + bytes[0]);
-
-        /*
+        
         logData("Subscribing to heart rate for 5 seconds");
         var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
         bluetoothle.subscribe(subscribeSuccess, subscribeError, paramsObj);
         setTimeout(unsubscribeDevice, 5000);
-        */
     }
     else
   {
