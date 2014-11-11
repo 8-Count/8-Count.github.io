@@ -219,7 +219,8 @@ function reconnectSuccess(obj)
 function exploreService()
 {
     logData("exploreService entered");
-    if (window.device.platform == iOSPlatform)
+    logData("platform = " + window.device.platform);
+    if (1 /*window.device.platform == iOSPlatform*/)
     {
       logData("Discovering heart rate service");
       var paramsObj = {"serviceUuids":[humidityServiceUuid]};
