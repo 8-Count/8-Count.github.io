@@ -276,6 +276,12 @@ function servicesHumiditySuccess(obj)
       var serviceUuid = serviceUuids[i];
 
       logData("Service " + i + ": UUID = " + serviceUuid);
+      
+      if (serviceUuid == humidityServiceUuid)
+      {
+        logData("Device has desired service: " + serviceUuid + ". @TODO: Search for characteristics");   
+      }
+        
       /**
       if (serviceUuid == heartRateServiceUuid)
       {
