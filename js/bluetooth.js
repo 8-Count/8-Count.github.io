@@ -29,8 +29,7 @@ function initializeSuccess(obj)
     if (address == null)
     {
         logData("Bluetooth initialized successfully. Starting scan for BLE devices");
-        var paramsObj = {"serviceUuids":[]};
-        bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
+        scanForDevices();
     }
     else
     {
@@ -41,6 +40,12 @@ function initializeSuccess(obj)
   {
     logData("Unexpected initialize status: " + obj.status);
   }
+}
+
+function scanForDevices()
+{
+    var paramsObj = {"serviceUuids":[]};
+    bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
 }
 
 function initializeError(obj)
@@ -274,53 +279,9 @@ function characteristicsHumidityError(obj)
   disconnectDevice();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function tempDisconnectDevice()
-{
-  logData("Disconnecting from device to test reconnect");
-    bluetoothle.disconnect(tempDisconnectSuccess, tempDisconnectError);
-}
-
-function tempDisconnectSuccess(obj)
-{
-    if (obj.status == "disconnected")
-    {
-        logData("Temp disconnect device and reconnecting in 1 second. Instantly reconnecting can cause issues");
-        setTimeout(reconnect, 1000);
-    }
-    else if (obj.status == "disconnecting")
-    {
-        logData("Temp disconnecting device");
-    }
-    else
-  {
-    logData("Unexpected temp disconnect status: " + obj.status);
-  }
-}
-
 function tempDisconnectError(obj)
 {
   logData("Temp disconnect error: " + obj.error + " - " + obj.message);
-}
-
-function reconnect()
-{
-  logData("Reconnecting with 5 second timeout");
-  bluetoothle.reconnect(reconnectSuccess, reconnectError);
-  reconnectTimer = setTimeout(reconnectTimeout, 5000);
 }
 
 function reconnectSuccess(obj)
@@ -551,8 +512,7 @@ function discoverSuccess(obj)
     if (obj.status == "discovered")
     {
         logData("Discovery completed");
-
-    readBatteryLevel();
+        //@TODO ANDROID STUFF
   }
   else
   {
@@ -574,8 +534,6 @@ function discoverError(obj)
 function enableHumiditySensorAndRead()
 {
     logData("Enabling humidity sensor");
-    /*var k = new Uint8Array(1);
-    k[0] = 1;*/
     var str = bluetoothle.bytesToEncodedString([0x01]);
     logData("str = " + str);
     var paramsObj = {"value":str, "serviceUuid":humidityServiceUuid, "characteristicUuid":humidityEnablingCharacteristicUuid};
@@ -613,35 +571,6 @@ function readHumidity()
     bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
-function readHumiditySuccess()
-{
-    if (obj.status == "read")
-    {
-        var bytes = bluetoothle.encodedStringToBytes(obj.value);
-        logData("Battery level: " + bytes[0]);
-        disconnectDevice();
-    }
-    else
-    {
-        logData("Unexpected read status: " + obj.status);
-        disconnectDevice();
-    }
-}
-
-function readHumidityError()
-{
-  logData("Read error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-
-function readBatteryLevel()
-{
-  logData("Reading battery level");
-  var paramsObj = {"serviceUuid":batteryServiceUuid, "characteristicUuid":batteryLevelCharacteristicUuid};
-  bluetoothle.read(readSuccess, readError, paramsObj);
-}
-
 function readSuccess(obj)
 {
     if (obj.status == "read")
@@ -667,88 +596,6 @@ function readSuccess(obj)
 function readError(obj)
 {
   logData("Read error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-function subscribeSuccess(obj)
-{   
-    if (obj.status == "subscribedResult")
-    {
-        logData("Subscription data received");
-
-        //Parse array of int32 into uint8
-        var bytes = bluetoothle.encodedStringToBytes(obj.value);
-
-        //Check for data
-        if (bytes.length == 0)
-        {
-            logData("Subscription result had zero length data");
-            return;
-        }
-
-        //Get the first byte that contains flags
-        var flag = bytes[0];
-
-        //Check if u8 or u16 and get heart rate
-        var hr;
-        if ((flag & 0x01) == 1)
-        {
-            var u16bytes = bytes.buffer.slice(1, 3);
-            var u16 = new Uint16Array(u16bytes)[0];
-            hr = u16;
-        }
-        else
-        {
-            var u8bytes = bytes.buffer.slice(1, 2);
-            var u8 = new Uint8Array(u8bytes)[0];
-            hr = u8;
-        }
-        logData("Heart Rate: " + hr);
-    }
-    else if (obj.status == "subscribed")
-    {
-        logData("Subscription started");
-    }
-    else
-  {
-    logData("Unexpected subscribe status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function subscribeError(msg)
-{
-  logData("Subscribe error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-function unsubscribeDevice()
-{
-  logData("Unsubscribing heart service");
-  var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
-  bluetoothle.unsubscribe(unsubscribeSuccess, unsubscribeError, paramsObj);
-}
-
-function unsubscribeSuccess(obj)
-{
-    if (obj.status == "unsubscribed")
-    {
-        logData("Unsubscribed device");
-
-        logData("Reading client configuration descriptor");
-        var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid, "descriptorUuid":clientCharacteristicConfigDescriptorUuid};
-        bluetoothle.readDescriptor(readDescriptorSuccess, readDescriptorError, paramsObj);
-    }
-    else
-  {
-    logData("Unexpected unsubscribe status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function unsubscribeError(obj)
-{
-  logData("Unsubscribe error: " + obj.error + " - " + obj.message);
   disconnectDevice();
 }
 
