@@ -584,7 +584,7 @@ function enableHumiditySensorAndRead()
 
 function enableHumiditySensorWriteSuccess(obj)
 {
-    if (obj.status == "read")
+    if (obj.status == "written")
     {
         logData("Write successful");
         readHumidity();
