@@ -609,8 +609,8 @@ function enableHumiditySensorWriteError(obj)
 function readHumidity()
 {    
     logData("Reading humidity");
-    var paramsObj = {"serviceUuid": humidityServiceUuid, "characteristicUuid": humidityReadingCharacteristicUuid};
-    bluetoothle.read(readHumiditySuccess, readHumidityError, paramsObj);
+    var paramsObj = {"serviceUuid":humidityServiceUuid, "characteristicUuid":humidityReadingCharacteristicUuid};
+    bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
 function readHumiditySuccess()
