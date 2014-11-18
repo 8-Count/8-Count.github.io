@@ -228,7 +228,6 @@ function servicesError(obj)
 {
     logData("Services discovery failure: " + obj.error + " - " + obj.message);
     disconnectDevice();
-    rescanForDevices();
 }
 
 function servicesSuccess(obj)
@@ -254,14 +253,12 @@ function servicesSuccess(obj)
         
         logData("Error: humidity service not found");
         disconnectDevice();
-        rescanForDevices();
     }
     else
     {
         logData("Unexpected services status: " + obj.status);
     }
     disconnectDevice();
-    rescanForDevices();
 }
 
 
@@ -273,7 +270,6 @@ function characteristicsError(obj)
 {
     logData("Characteristics discovery error: " + obj.error + " - " + obj.message);
     disconnectDevice();
-    rescanForDevices();
 }
 
 function characteristicsSuccess(obj)
@@ -301,7 +297,6 @@ function characteristicsSuccess(obj)
         logData("Unexpected characteristics status: " + obj.status);
     }
     disconnectDevice();
-    rescanForDevices();
 }
 
 
@@ -313,7 +308,6 @@ function discoverError(obj)
 {
     logData("Discover error: " + obj.error + " - " + obj.message);
     disconnectDevice();
-    rescanForDevices();
 }
 
 function discoverSuccess(obj)
@@ -327,7 +321,6 @@ function discoverSuccess(obj)
     {
         logData("Unexpected discover status: " + obj.status);
         disconnectDevice();
-        rescanForDevices();
     }
 }
 
@@ -351,7 +344,6 @@ function writeError(obj)
 {
     logData("Write error: " + obj.error + " - " + obj.message);
     disconnectDevice();
-    rescanForDevices();
 }
 
 function writeSuccess(obj)
@@ -368,7 +360,6 @@ function writeSuccess(obj)
     {
         logData("Unexpected read status: " + obj.status);
         disconnectDevice();
-        rescanForDevices();
     }
 }
 
@@ -381,7 +372,6 @@ function readError(obj)
 {
     logData("Read error: " + obj.error + " - " + obj.message);
     disconnectDevice();
-    rescanForDevices();
 }
 
 function readSuccess(obj)
@@ -396,7 +386,6 @@ function readSuccess(obj)
         logData("Unexpected read status: " + obj.status);
     }
     disconnectDevice();
-    rescanForDevices();
 }
 
 function disconnectDevice()
