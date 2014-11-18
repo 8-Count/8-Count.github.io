@@ -155,7 +155,6 @@ function stopScanSuccess(obj)
     {
         logData("Unexpected stop scan status: " + obj.status);
     }
-    rescanForDevices();
 }
 
 
