@@ -108,6 +108,11 @@ function connectDevice(address)
     connectTimer = setTimeout(connectTimeout, 5000);
 }
 
+function connectTimeout()
+{
+    logData("Connection timed out");
+}
+
 
 /*-----------------*/
 /*    STOP SCAN    */
@@ -143,40 +148,29 @@ function connectError(obj)
 
 function connectSuccess(obj)
 {
-    if (obj.status == "connected")
-    {
-        logData("Connected to : " + obj.name + " - " + obj.address);
-
-        clearConnectTimeout();
-        exploreService();
-    }
-    else if (obj.status == "connecting")
+    if (obj.status == "connecting")
     {
         logData("Connecting to : " + obj.name + " - " + obj.address);
     }
-    else
+    else 
     {
-        logData("Unexpected connect status: " + obj.status);
-        clearConnectTimeout();
+        logData("Clearing connect timeout");
+        if (connectTimer != null)
+        {
+            clearTimeout(connectTimer);
+        }
+        
+        if (obj.status == "connected")
+        {
+            logData("Connected to : " + obj.name + " - " + obj.address);
+            exploreService();
+        }
+        else
+        {
+            logData("Unexpected connect status: " + obj.status);
+        }
     }
 }
-
-
-
-function connectTimeout()
-{
-  logData("Connection timed out");
-}
-
-function clearConnectTimeout()
-{ 
-    logData("Clearing connect timeout");
-  if (connectTimer != null)
-  {
-    clearTimeout(connectTimer);
-  }
-}
-
 
 function exploreService()
 {
@@ -209,40 +203,43 @@ function exploreService()
 /** SERVICES **/
 /**************/
 
-function servicesHumiditySuccess(obj)
-{
-  logData("iOS services discovering - success");
-  if (obj.status == "discoveredServices")
-  {
-    var serviceUuids = obj.serviceUuids;
-    for (var i = 0; i < serviceUuids.length; i++)
-    {
-      var serviceUuid = serviceUuids[i];
-
-      logData("Service " + i + ": UUID = " + serviceUuid);
-      
-      if (serviceUuid == humidityServiceUuid)
-      {
-        logData("Device has desired service: " + serviceUuid);
-        var paramsObj = {"serviceUuid":serviceUuid, "characteristicUuids":[]};
-        bluetoothle.characteristics(characteristicsHumiditySuccess, characteristicsHumidityError, paramsObj);
-        return;
-      }
-    }
-    logData("Error: humidity service not found");
-  }
-    else
-  {
-    logData("Unexpected services status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
 function servicesHumidityError(obj)
 {
-  logData("Services discovery failure: " + obj.error + " - " + obj.message);
-  disconnectDevice();
+    logData("Services discovery failure: " + obj.error + " - " + obj.message);
+    disconnectDevice();
 }
+
+function servicesHumiditySuccess(obj)
+{
+    logData("iOS services discovering - success");
+    if (obj.status == "discoveredServices")
+    {
+        var serviceUuids = obj.serviceUuids;
+        for (var i = 0; i < serviceUuids.length; i++)
+        {
+            var serviceUuid = serviceUuids[i];
+
+            logData("Service " + i + ": UUID = " + serviceUuid);
+      
+            if (serviceUuid == humidityServiceUuid)
+            {
+                logData("Device has desired service: " + serviceUuid);
+                var paramsObj = {"serviceUuid":serviceUuid, "characteristicUuids":[]};
+                bluetoothle.characteristics(characteristicsHumiditySuccess, characteristicsHumidityError, paramsObj);
+                return;
+            }
+        }
+        
+        logData("Error: humidity service not found");
+    }
+    else
+    {
+        logData("Unexpected services status: " + obj.status);
+    }
+    disconnectDevice();
+}
+
+
 
 /***********/
 /** CHARS **/
@@ -255,7 +252,6 @@ function characteristicsHumiditySuccess(obj)
     var characteristics = obj.characteristics;
     for (var i = 0; i < characteristics.length; i++)
     {
-      //logData("humidity characteristics found, now discovering descriptor");
       var characteristicUuid = characteristics[i].characteristicUuid;
 
       logData("Characteristic " + i + ": UUID = " + characteristicUuid);
@@ -282,50 +278,19 @@ function characteristicsHumidityError(obj)
   disconnectDevice();
 }
 
-function reconnectSuccess(obj)
-{
-  if (obj.status == "connected")
-  {
-    logData("Reconnected to : " + obj.name + " - " + obj.address);
-
-    clearReconnectTimeout();
-
-    exploreService();
-  }
-  else if (obj.status == "connecting")
-  {
-    logData("Reconnecting to : " + obj.name + " - " + obj.address);
-  }
-  else
-  {
-    logData("Unexpected reconnect status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function reconnectError(obj)
-{
-  logData("Reconnect error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-function reconnectTimeout()
-{
-  logData("Reconnection timed out");
-}
-
-function clearReconnectTimeout()
-{ 
-    logData("Clearing reconnect timeout");
-  if (reconnectTimer != null)
-  {
-    clearTimeout(reconnectTimer);
-  }
-}
-
 /***********************/
 /****** ANDROID ********/
 /***********************/
+
+/*----------------*/
+/*    DISCOVER    */
+/*----------------*/
+
+function discoverError(obj)
+{
+    logData("Discover error: " + obj.error + " - " + obj.message);
+    disconnectDevice();
+}
 
 function discoverSuccess(obj)
 {
@@ -333,18 +298,12 @@ function discoverSuccess(obj)
     {
         logData("Discovery completed");
         //@TODO ANDROID STUFF
-  }
-  else
-  {
-    logData("Unexpected discover status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function discoverError(obj)
-{
-  logData("Discover error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
+    }
+    else
+    {
+        logData("Unexpected discover status: " + obj.status);
+        disconnectDevice();
+    }
 }
 
 /*********************/
@@ -391,6 +350,17 @@ function readHumidity()
     bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
+
+/*------------*/
+/*    READ    */
+/*------------*/
+
+function readError(obj)
+{
+    logData("Read error: " + obj.error + " - " + obj.message);
+    disconnectDevice();
+}
+
 function readSuccess(obj)
 {
     if (obj.status == "read")
@@ -400,43 +370,25 @@ function readSuccess(obj)
         disconnectDevice();
     }
     else
-  {
-    logData("Unexpected read status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function readError(obj)
-{
-  logData("Read error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-function readDescriptorSuccess(obj)
-{
-    if (obj.status == "readDescriptor")
     {
-        var bytes = bluetoothle.encodedStringToBytes(obj.value);
-        var u16Bytes = new Uint16Array(bytes.buffer);
-        logData("Read descriptor value: " + u16Bytes[0]);
+        logData("Unexpected read status: " + obj.status);
         disconnectDevice();
     }
-    else
-  {
-    logData("Unexpected read descriptor status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function readDescriptorError(obj)
-{
-  logData("Read Descriptor error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
 }
 
 function disconnectDevice()
 {
-  bluetoothle.disconnect(disconnectSuccess, disconnectError);
+    bluetoothle.disconnect(disconnectSuccess, disconnectError);
+}
+
+
+/*------------------*/
+/*    DISCONNECT    */
+/*------------------*/
+
+function disconnectError(obj)
+{
+    logData("Disconnect error: " + obj.error + " - " + obj.message);
 }
 
 function disconnectSuccess(obj)
@@ -444,26 +396,26 @@ function disconnectSuccess(obj)
     if (obj.status == "disconnected")
     {
         logData("Disconnect device");
-        closeDevice();
+        bluetoothle.close(closeSuccess, closeError);
     }
     else if (obj.status == "disconnecting")
     {
         logData("Disconnecting device");
     }
     else
-  {
-    logData("Unexpected disconnect status: " + obj.status);
-  }
+    {
+        logData("Unexpected disconnect status: " + obj.status);
+    }
 }
 
-function disconnectError(obj)
-{
-  logData("Disconnect error: " + obj.error + " - " + obj.message);
-}
 
-function closeDevice()
+/*-------------*/
+/*    CLOSE    */
+/*-------------*/
+
+function closeError(obj)
 {
-  bluetoothle.close(closeSuccess, closeError);
+    logData("Close error: " + obj.error + " - " + obj.message);
 }
 
 function closeSuccess(obj)
@@ -473,12 +425,7 @@ function closeSuccess(obj)
         logData("Closed device");
     }
     else
-  {
-    logData("Unexpected close status: " + obj.status);
-  }
-}
-
-function closeError(obj)
-{
-  logData("Close error: " + obj.error + " - " + obj.message);
+    {
+        logData("Unexpected close status: " + obj.status);
+    }
 }
