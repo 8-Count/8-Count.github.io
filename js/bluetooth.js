@@ -277,9 +277,13 @@ function servicesHumiditySuccess(obj)
 
       logData("Service " + i + ": UUID = " + serviceUuid);
       
-      if (serviceUuid === humidityServiceUuid)
+      if (serviceUuid == humidityServiceUuid)
       {
         logData("Device has desired service: " + serviceUuid + ". @TODO: Search for characteristics");   
+      }
+      if (i == 3) {
+           logData("|" + serviceUuid + "|" + humidityServiceUuid + "|");
+           logData(humidityServiceUuid.localeCompare(serviceUuid));
       }
         
       /**
