@@ -7,6 +7,7 @@ var humidityEnablingCharacteristicUuid = "f000aa22-0451-4000-b000-000000000000";
 var scanTimer = null;
 var connectTimer = null;
 var reconnectTimer = null;
+var timedOutScan = false;
 
 /** PLATFORMS **/
 var Device_iPad = "iPad";
@@ -16,6 +17,7 @@ var Device_Android = "Android";
 var scanIteration = -1;
 var RESCAN_SLEEP_DURATION = 2000; /* wait 2 seconds */
 var MAX_RESCAN_ITERATIONS = 5;
+
 
 function logData(message)
 {
@@ -91,6 +93,7 @@ function startScanSuccess(obj)
     if (obj.status == "scanResult")
     {
         logData("Stopping scan..");
+        timedOutScan = false;
         bluetoothle.stopScan(stopScanSuccess, stopScanError);
         
         logData("Clearing scanning timeout");
@@ -117,6 +120,7 @@ function startScanSuccess(obj)
 function scanTimeout()
 {
     logData("Scanning time out, stopping");
+    timedOutScan = true;
     bluetoothle.stopScan(stopScanSuccess, stopScanError);
 }
 
@@ -154,6 +158,11 @@ function stopScanSuccess(obj)
     else
     {
         logData("Unexpected stop scan status: " + obj.status);
+    }
+    
+    if (timedOutScan)
+    {
+        rescanForDevices();    
     }
 }
 
