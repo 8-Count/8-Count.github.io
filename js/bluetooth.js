@@ -1,13 +1,8 @@
 var addressKey = "address";
 
-var heartRateServiceUuid = "180d";
 var humidityServiceUuid = "f000aa20-0451-4000-b000-000000000000";
-var humidityReadingCharacteristicUuid = "f000aa21-0451-4000-b000-00000000";
-var humidityEnablingCharacteristicUiud = "f000aa22-0451-4000-b000-00000000";
-var heartRateMeasurementCharacteristicUuid = "2a37";
-var clientCharacteristicConfigDescriptorUuid = "2902";
-var batteryServiceUuid = "180f";
-var batteryLevelCharacteristicUuid = "2a19";
+var humidityReadingCharacteristicUuid = "f000aa21-0451-4000-b000-000000000000";
+var humidityEnablingCharacteristicUiud = "f000aa22-0451-4000-b000-000000000000";
 
 var scanTimer = null;
 var connectTimer = null;
@@ -128,8 +123,8 @@ function connectSuccess(obj)
 
     clearConnectTimeout();
     //tempDisconnectDevice();
-    //enableHumiditySensor(); //important
-    exploreService();
+    enableHumiditySensorAndRead(); //important
+    //exploreService();
   }
   else if (obj.status == "connecting")
   {
@@ -161,6 +156,59 @@ function clearConnectTimeout()
     clearTimeout(connectTimer);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function exploreService()
+{
+    var deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? Device_iPad 
+        : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? Device_iPhone 
+        : (navigator.userAgent.match(/Android/i)) == "Android" ? Device_Android 
+        : "null";
+    
+    logData("This device = " + deviceType);
+    if (deviceType == Device_iPhone || 
+        deviceType == Device_iPad
+       )
+    {
+      logData("iOS services discovering - attempting");
+      var paramsObj = {"serviceUuids":[]};
+      bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
+    }
+    else if (deviceType == Device_Android)
+    {
+      logData("Android services discovering - attempting");
+      bluetoothle.discover(discoverSuccess, discoverError);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function tempDisconnectDevice()
 {
@@ -218,28 +266,7 @@ function reconnectSuccess(obj)
   }
 }
 
-function exploreService()
-{
-    var deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? Device_iPad 
-        : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? Device_iPhone 
-        : (navigator.userAgent.match(/Android/i)) == "Android" ? Device_Android 
-        : "null";
-    
-    logData("This device = " + deviceType);
-    if (deviceType == Device_iPhone || 
-        deviceType == Device_iPad
-       )
-    {
-      logData("iOS services discovering - attempting");
-      var paramsObj = {"serviceUuids":[]};
-      bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
-    }
-    else if (deviceType == Device_Android)
-    {
-      logData("Android services discovering - attempting");
-      bluetoothle.discover(discoverSuccess, discoverError);
-    }
-}
+
 
 function reconnectError(obj)
 {
@@ -547,10 +574,10 @@ function discoverError(obj)
 /** ENABLE HUMIDITY **/
 /*********************/
 
-function enableHumiditySensor()
+function enableHumiditySensorAndRead()
 {
     logData("Enabling humidity sensor");
-    var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityEnablingCharacteristicUiud};
+    var paramsObj = {"value": bluetoothle.bytesToEncodedStrings(1), "serviceUiud": humidityServiceUuid, "charactisticUiud": humidityEnablingCharacteristicUiud};
     bluetoothle.write(enableHumiditySensorWriteSuccess, enableHumiditySensorWriteError, paramsObj);
 }
 
