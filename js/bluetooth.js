@@ -123,8 +123,8 @@ function connectSuccess(obj)
 
     clearConnectTimeout();
     //tempDisconnectDevice();
-    enableHumiditySensorAndRead(); //important
-    //exploreService();
+    //enableHumiditySensorAndRead(); //important
+    exploreService();
   }
   else if (obj.status == "connecting")
   {
@@ -193,8 +193,85 @@ function exploreService()
     }
 }
 
+/******************/
+/** CUSTOM - iOS **/
+/******************/
 
+/**************/
+/** SERVICES **/
+/**************/
 
+function servicesHumiditySuccess(obj)
+{
+  logData("iOS services discovering - success");
+  if (obj.status == "discoveredServices")
+  {
+    var serviceUuids = obj.serviceUuids;
+    for (var i = 0; i < serviceUuids.length; i++)
+    {
+      var serviceUuid = serviceUuids[i];
+
+      logData("Service " + i + ": UUID = " + serviceUuid);
+      
+      if (serviceUuid == humidityServiceUuid)
+      {
+        logData("Device has desired service: " + serviceUuid);
+        var paramsObj = {"serviceUuid":serviceUuid, "characteristicUuids":[]};
+        bluetoothle.characteristics(characteristicsHumiditySuccess, characteristicsHumidityError, paramsObj);
+        return;
+      }
+    }
+    logData("Error: humidity service not found");
+  }
+    else
+  {
+    logData("Unexpected services status: " + obj.status);
+  }
+  disconnectDevice();
+}
+
+function servicesHumidityError(obj)
+{
+  logData("Services discovery failure: " + obj.error + " - " + obj.message);
+  disconnectDevice();
+}
+
+/***********/
+/** CHARS **/
+/***********/
+
+function characteristicsHumiditySuccess(obj)
+{
+  if (obj.status == "discoveredCharacteristics")
+  {
+    var characteristics = obj.characteristics;
+    for (var i = 0; i < characteristics.length; i++)
+    {
+      //logData("humidity characteristics found, now discovering descriptor");
+      var characteristicUuid = characteristics[i].characteristicUuid;
+
+      logData("Characteristic " + i + ": UUID = " + characteristicUuid);
+        
+      if (characteristicUuid == humidityEnablingCharacteristicUiud)
+      {
+          logData("Service has desired characteristic: " + characteristicUuid);
+          enableHumiditySensorAndRead();   
+      }
+    }
+    logData("Error: humidity measurement characteristic not found.");
+  }
+    else
+  {
+    logData("Unexpected characteristics status: " + obj.status);
+  }
+  disconnectDevice();
+}
+
+function characteristicsHumidityError(obj)
+{
+  logData("Characteristics discovery error: " + obj.error + " - " + obj.message);
+  disconnectDevice();
+}
 
 
 
@@ -286,87 +363,6 @@ function clearReconnectTimeout()
   {
     clearTimeout(reconnectTimer);
   }
-}
-
-/******************/
-/** CUSTOM - iOS **/
-/******************/
-
-/**************/
-/** SERVICES **/
-/**************/
-
-function servicesHumiditySuccess(obj)
-{
-  logData("iOS services discovering - success");
-  if (obj.status == "discoveredServices")
-  {
-    var serviceUuids = obj.serviceUuids;
-    for (var i = 0; i < serviceUuids.length; i++)
-    {
-      var serviceUuid = serviceUuids[i];
-
-      logData("Service " + i + ": UUID = " + serviceUuid);
-      
-      if (serviceUuid == humidityServiceUuid)
-      {
-        logData("Device has desired service: " + serviceUuid + ". @TODO: Search for characteristics");
-        var paramsObj = {"serviceUuid":serviceUuid, "characteristicUuids":[]};
-        bluetoothle.characteristics(characteristicsHumiditySuccess, characteristicsHumidityError, paramsObj);
-        return;
-      }
-    }
-    logData("Error: humidity service not found");
-  }
-    else
-  {
-    logData("Unexpected services status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
-function servicesHumidityError(obj)
-{
-  logData("Services discovery failure: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-/***********/
-/** CHARS **/
-/***********/
-
-function characteristicsHumiditySuccess(obj)
-{
-  if (obj.status == "discoveredCharacteristics")
-  {
-    var characteristics = obj.characteristics;
-    for (var i = 0; i < characteristics.length; i++)
-    {
-      //logData("humidity characteristics found, now discovering descriptor");
-      var characteristicUuid = characteristics[i].characteristicUuid;
-
-      logData("Characteristic " + i + ": UUID = " + characteristicUuid);
-        /*
-      if (characteristicUuid == heartRateMeasurementCharacteristicUuid)
-      {
-        var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
-        bluetoothle.descriptors(descriptorsHeartSuccess, descriptorsHeartError, paramsObj);
-        return;
-      }*/
-    }
-    logData("Error: humidity measurement characteristic not found.");
-  }
-    else
-  {
-    logData("Unexpected characteristics status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
-function characteristicsHumidityError(obj)
-{
-  logData("Characteristics discovery error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
 }
 
 /*****************/
