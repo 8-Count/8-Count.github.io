@@ -21,132 +21,147 @@ function logData(message)
         message + "<br />" + document.getElementById("connection_log").innerHTML;
 }
 
-function initializeSuccess(obj)
-{
-  if (obj.status == "enabled")
-  {
-    var address = window.localStorage.getItem(addressKey);
-    if (address == null)
-    {
-        logData("Bluetooth initialized successfully. Starting scan for BLE devices");
-        scanForDevices();
-    }
-    else
-    {
-        connectDevice(address);
-    }
-  }
-  else
-  {
-    logData("Unexpected initialize status: " + obj.status);
-  }
-}
-
 function scanForDevices()
 {
     var paramsObj = {"serviceUuids":[]};
     bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
 }
 
+/*------------------*/
+/*    INITIALIZE    */
+/*------------------*/
+
 function initializeError(obj)
 {
-  logData("Initialize error: " + obj.error + " - " + obj.message);
+    logData("Initialize error: " + obj.error + " - " + obj.message);
+}
+
+function initializeSuccess(obj)
+{
+    if (obj.status == "enabled")
+    {
+        var address = window.localStorage.getItem(addressKey);
+        if (address == null)
+        {
+            logData("Bluetooth initialized successfully. Starting scan for BLE devices");
+            scanForDevices();
+        }
+        else
+        {
+            connectDevice(address);
+        }   
+    }
+    else
+    {
+        logData("Unexpected initialize status: " + obj.status);
+    }
+}
+
+
+/*------------------*/
+/*    START SCAN    */
+/*------------------*/
+
+function startScanError(obj)
+{
+    logData("Start scan error: " + obj.error + " - " + obj.message);
 }
 
 function startScanSuccess(obj)
 {
-  if (obj.status == "scanResult")
-  {
-    logData("Stopping scan..");
-    bluetoothle.stopScan(stopScanSuccess, stopScanError);
-    clearScanTimeout();
+    if (obj.status == "scanResult")
+    {
+        logData("Stopping scan..");
+        bluetoothle.stopScan(stopScanSuccess, stopScanError);
+        
+        logData("Clearing scanning timeout");
+        if (scanTimer != null)
+        {
+            clearTimeout(scanTimer);
+        }
 
-    window.localStorage.setItem(addressKey, obj.address);
+        window.localStorage.setItem(addressKey, obj.address);
         connectDevice(obj.address);
-  }
-  else if (obj.status == "scanStarted")
-  {
-    logData("Scan started successfully, stopping in 10s");
-    scanTimer = setTimeout(scanTimeout, 10000);
-  }
-  else
-  {
-    logData("Unexpected start scan status: " + obj.status);
-  }
-}
-
-function startScanError(obj)
-{
-  logData("Start scan error: " + obj.error + " - " + obj.message);
+    }
+    else if (obj.status == "scanStarted")
+    {
+        logData("Scan started successfully, stopping in 10s");
+        scanTimer = setTimeout(scanTimeout, 10000);
+    }
+    else
+    {
+        logData("Unexpected start scan status: " + obj.status);
+    }
 }
 
 function scanTimeout()
 {
-  logData("Scanning time out, stopping");
-  bluetoothle.stopScan(stopScanSuccess, stopScanError);
-}
-
-function clearScanTimeout()
-{ 
-    logData("Clearing scanning timeout");
-  if (scanTimer != null)
-  {
-    clearTimeout(scanTimer);
-  }
-}
-
-function stopScanSuccess(obj)
-{
-  if (obj.status == "scanStopped")
-  {
-    logData("Scan was stopped successfully");
-  }
-  else
-  {
-    logData("Unexpected stop scan status: " + obj.status);
-  }
-}
-
-function stopScanError(obj)
-{
-  logData("Stop scan error: " + obj.error + " - " + obj.message);
+    logData("Scanning time out, stopping");
+    bluetoothle.stopScan(stopScanSuccess, stopScanError);
 }
 
 function connectDevice(address)
 {
-  logData("Begining connection to: " + address + " with 5 second timeout");
+    logData("Begining connection to: " + address + " with 5 second timeout");
     var paramsObj = {"address":address};
-  bluetoothle.connect(connectSuccess, connectError, paramsObj);
-  connectTimer = setTimeout(connectTimeout, 5000);
+    bluetoothle.connect(connectSuccess, connectError, paramsObj);
+    connectTimer = setTimeout(connectTimeout, 5000);
+}
+
+
+/*-----------------*/
+/*    STOP SCAN    */
+/*-----------------*/
+
+function stopScanError(obj)
+{
+    logData("Stop scan error: " + obj.error + " - " + obj.message);
+}
+
+function stopScanSuccess(obj)
+{
+    if (obj.status == "scanStopped")
+    {
+        logData("Scan was stopped successfully");
+    }
+    else
+    {
+        logData("Unexpected stop scan status: " + obj.status);
+    }
+}
+
+
+/*---------------*/
+/*    CONNECT    */
+/*---------------*/
+
+function connectError(obj)
+{
+    logData("Connect error: " + obj.error + " - " + obj.message);
+    clearConnectTimeout();
 }
 
 function connectSuccess(obj)
 {
-  if (obj.status == "connected")
-  {
-    logData("Connected to : " + obj.name + " - " + obj.address);
+    if (obj.status == "connected")
+    {
+        logData("Connected to : " + obj.name + " - " + obj.address);
 
-    clearConnectTimeout();
-    //tempDisconnectDevice();
-    //enableHumiditySensorAndRead(); //important
-    exploreService();
-  }
-  else if (obj.status == "connecting")
-  {
-    logData("Connecting to : " + obj.name + " - " + obj.address);
-  }
+        clearConnectTimeout();
+        exploreService();
+    }
+    else if (obj.status == "connecting")
+    {
+        logData("Connecting to : " + obj.name + " - " + obj.address);
+    }
     else
-  {
-    logData("Unexpected connect status: " + obj.status);
-    clearConnectTimeout();
-  }
+    {
+        logData("Unexpected connect status: " + obj.status);
+        clearConnectTimeout();
+    }
 }
 
-function connectError(obj)
-{
-  logData("Connect error: " + obj.error + " - " + obj.message);
-  clearConnectTimeout();
-}
+
 
 function connectTimeout()
 {
@@ -163,18 +178,6 @@ function clearConnectTimeout()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 function exploreService()
 {
     var deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? Device_iPad 
@@ -187,14 +190,14 @@ function exploreService()
         deviceType == Device_iPad
        )
     {
-      logData("iOS services discovering - attempting");
-      var paramsObj = {"serviceUuids":[]};
-      bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
+        logData("iOS services discovering - attempting");
+        var paramsObj = {"serviceUuids":[]};
+        bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
     }
     else if (deviceType == Device_Android)
     {
-      logData("Android services discovering - attempting");
-      bluetoothle.discover(discoverSuccess, discoverError);
+        logData("Android services discovering - attempting");
+        bluetoothle.discover(discoverSuccess, discoverError);
     }
 }
 
