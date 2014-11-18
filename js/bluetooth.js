@@ -1,7 +1,7 @@
 var addressKey = "address";
 
 var heartRateServiceUuid = "180d";
-var humidityServiceUuid = "f000aa20-0451-4000-b000-00000000";
+var humidityServiceUuid = "f000aa20-0451-4000-b000-000000000000";
 var humidityReadingCharacteristicUuid = "f000aa21-0451-4000-b000-00000000";
 var humidityEnablingCharacteristicUiud = "f000aa22-0451-4000-b000-00000000";
 var heartRateMeasurementCharacteristicUuid = "2a37";
