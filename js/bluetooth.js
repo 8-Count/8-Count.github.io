@@ -2,7 +2,7 @@ var addressKey = "address";
 
 var humidityServiceUuid = "f000aa20-0451-4000-b000-000000000000";
 var humidityReadingCharacteristicUuid = "f000aa21-0451-4000-b000-000000000000";
-var humidityEnablingCharacteristicUiud = "f000aa22-0451-4000-b000-000000000000";
+var humidityEnablingCharacteristicUuid = "f000aa22-0451-4000-b000-000000000000";
 
 var scanTimer = null;
 var connectTimer = null;
@@ -252,7 +252,7 @@ function characteristicsHumiditySuccess(obj)
 
       logData("Characteristic " + i + ": UUID = " + characteristicUuid);
         
-      if (characteristicUuid == humidityEnablingCharacteristicUiud)
+      if (characteristicUuid == humidityEnablingCharacteristicUuid)
       {
           logData("Service has desired characteristic: " + characteristicUuid);
           enableHumiditySensorAndRead();
@@ -601,7 +601,7 @@ function enableHumiditySensorWriteError(obj)
 function readHumidity()
 {    
     logData("Reading humidity");
-    var paramsObj = {"serviceUiud": humidityServiceUuid, "charactisticUiud": humidityReadingCharacteristicUuid};
+    var paramsObj = {"serviceUuid": humidityServiceUuid, "charactisticUuid": humidityReadingCharacteristicUuid};
     bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
