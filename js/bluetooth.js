@@ -584,8 +584,16 @@ function enableHumiditySensorAndRead()
 
 function enableHumiditySensorWriteSuccess(obj)
 {
-    logData("Write successful");
-    readHumidity();
+    if (obj.status == "read")
+    {
+        logData("Write successful");
+        readHumidity();
+    }
+    else 
+    {
+        logData("Unexpected read status: " + obj.status);
+        disconnectDevice();
+    }
 }
 
 function enableHumiditySensorWriteError(obj)
@@ -601,11 +609,30 @@ function enableHumiditySensorWriteError(obj)
 function readHumidity()
 {    
     logData("Reading humidity");
-    var paramsObj = {"serviceUuid": humidityServiceUuid, "charactisticUuid": humidityReadingCharacteristicUuid};
-    bluetoothle.read(readSuccess, readError, paramsObj);
+    var paramsObj = {"serviceUuid": humidityServiceUuid, "characteristicUuid": humidityReadingCharacteristicUuid};
+    bluetoothle.read(readHumiditySuccess, readHumidityError, paramsObj);
 }
 
+function readHumiditySuccess()
+{
+    if (obj.status == "read")
+    {
+        var bytes = bluetoothle.encodedStringToBytes(obj.value);
+        logData("Battery level: " + bytes[0]);
+        disconnectDevice();
+    }
+    else
+    {
+        logData("Unexpected read status: " + obj.status);
+        disconnectDevice();
+    }
+}
 
+function readHumidityError()
+{
+  logData("Read error: " + obj.error + " - " + obj.message);
+  disconnectDevice();
+}
 
 
 function readBatteryLevel()
@@ -620,7 +647,8 @@ function readSuccess(obj)
     if (obj.status == "read")
     {
         var bytes = bluetoothle.encodedStringToBytes(obj.value);
-        logData("Battery level: " + bytes[0]);
+        logData("read humidity: bytes[0]:" + bytes[0]);
+        logData("read humidity: bytes:" + bytes);
         disconnectDevice();
         /*
         logData("Subscribing to heart rate for 5 seconds");
