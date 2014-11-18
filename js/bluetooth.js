@@ -241,7 +241,7 @@ function servicesSuccess(obj)
         {
             var serviceUuid = serviceUuids[i];
 
-            logData("Service " + i + ": UUID = " + serviceUuid);
+            //logData("Service " + i + ": UUID = " + serviceUuid);
       
             if (serviceUuid == humidityServiceUuid)
             {
