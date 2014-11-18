@@ -255,7 +255,8 @@ function characteristicsHumiditySuccess(obj)
       if (characteristicUuid == humidityEnablingCharacteristicUiud)
       {
           logData("Service has desired characteristic: " + characteristicUuid);
-          enableHumiditySensorAndRead();   
+          enableHumiditySensorAndRead();
+          return;
       }
     }
     logData("Error: humidity measurement characteristic not found.");
