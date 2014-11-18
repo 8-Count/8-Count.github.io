@@ -573,7 +573,7 @@ function discoverError(obj)
 function enableHumiditySensorAndRead()
 {
     logData("Enabling humidity sensor");
-    var paramsObj = {"value": bluetoothle.bytesToEncodedStrings(1), "serviceUiud": humidityServiceUuid, "charactisticUiud": humidityEnablingCharacteristicUiud};
+    var paramsObj = {"value": bluetoothle.bytesToEncodedString(1), "serviceUiud": humidityServiceUuid, "charactisticUiud": humidityEnablingCharacteristicUiud};
     bluetoothle.write(enableHumiditySensorWriteSuccess, enableHumiditySensorWriteError, paramsObj);
 }
 
