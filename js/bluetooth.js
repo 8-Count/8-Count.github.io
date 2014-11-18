@@ -279,11 +279,6 @@ function characteristicsHumidityError(obj)
   disconnectDevice();
 }
 
-function tempDisconnectError(obj)
-{
-  logData("Temp disconnect error: " + obj.error + " - " + obj.message);
-}
-
 function reconnectSuccess(obj)
 {
   if (obj.status == "connected")
@@ -305,8 +300,6 @@ function reconnectSuccess(obj)
   }
 }
 
-
-
 function reconnectError(obj)
 {
   logData("Reconnect error: " + obj.error + " - " + obj.message);
@@ -325,182 +318,6 @@ function clearReconnectTimeout()
   {
     clearTimeout(reconnectTimer);
   }
-}
-
-/*****************/
-/** HEART - iOS **/
-/*****************/
-
-/**************/
-/** SERVICES **/
-/**************/
-
-function servicesHeartSuccess(obj)
-{
-  if (obj.status == "discoveredServices")
-  {
-    var serviceUuids = obj.serviceUuids;
-    for (var i = 0; i < serviceUuids.length; i++)
-    {
-      var serviceUuid = serviceUuids[i];
-
-      if (serviceUuid == heartRateServiceUuid)
-      {
-        logData("Finding heart rate characteristics");
-        var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuids":[heartRateMeasurementCharacteristicUuid]};
-        bluetoothle.characteristics(characteristicsHeartSuccess, characteristicsHeartError, paramsObj);
-        return;
-      }
-    }
-    logData("Error: heart rate service not found");
-  }
-    else
-  {
-    logData("Unexpected services heart status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
-function servicesHeartError(obj)
-{
-  logData("Services heart error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-/***********/
-/** CHARS **/
-/***********/
-
-function characteristicsHeartSuccess(obj)
-{
-  if (obj.status == "discoveredCharacteristics")
-  {
-    var characteristics = obj.characteristics;
-    for (var i = 0; i < characteristics.length; i++)
-    {
-      logData("Heart characteristics found, now discovering descriptor");
-      var characteristicUuid = characteristics[i].characteristicUuid;
-
-      if (characteristicUuid == heartRateMeasurementCharacteristicUuid)
-      {
-        var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
-        bluetoothle.descriptors(descriptorsHeartSuccess, descriptorsHeartError, paramsObj);
-        return;
-      }
-    }
-    logData("Error: Heart rate measurement characteristic not found.");
-  }
-    else
-  {
-    logData("Unexpected characteristics heart status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
-function characteristicsHeartError(obj)
-{
-  logData("Characteristics heart error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-/**************/
-/** DESCRIPT **/
-/**************/
-
-function descriptorsHeartSuccess(obj)
-{
-  if (obj.status == "discoveredDescriptors")
-  {
-    logData("Discovered heart descriptors, now discovering battery service");
-    var paramsObj = {"serviceUuids":[batteryServiceUuid]};
-    bluetoothle.services(servicesBatterySuccess, servicesBatteryError, paramsObj);
-  }
-    else
-  {
-    logData("Unexpected descriptors heart status: " + obj.status);
-    disconnectDevice();
-  }
-}
-
-function descriptorsHeartError(obj)
-{
-  logData("Descriptors heart error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-
-/***************************/
-/****** BATTERY - iOS ******/
-/***************************/
-
-/**************/
-/** SERVICES **/
-/**************/
-
-function servicesBatterySuccess(obj)
-{
-  if (obj.status == "discoveredServices")
-  {
-    var serviceUuids = obj.serviceUuids;
-    for (var i = 0; i < serviceUuids.length; i++)
-    {
-      var serviceUuid = serviceUuids[i];
-
-      if (serviceUuid == batteryServiceUuid)
-      {
-        logData("Found battery service, now finding characteristic");
-        var paramsObj = {"serviceUuid":batteryServiceUuid, "characteristicUuids":[batteryLevelCharacteristicUuid]};
-        bluetoothle.characteristics(characteristicsBatterySuccess, characteristicsBatteryError, paramsObj);
-        return;
-      }
-    }
-    logData("Error: battery service not found");
-  }
-    else
-  {
-    logData("Unexpected services battery status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
-function servicesBatteryError(obj)
-{
-  logData("Services battery error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
-
-/***********/
-/** CHARS **/
-/***********/
-
-function characteristicsBatterySuccess(obj)
-{
-  if (obj.status == "discoveredCharacteristics")
-  {
-    var characteristics = obj.characteristics;
-    for (var i = 0; i < characteristics.length; i++)
-    {
-      var characteristicUuid = characteristics[i].characteristicUuid;
-
-      if (characteristicUuid == batteryLevelCharacteristicUuid)
-      {
-        readBatteryLevel();
-        return;
-      }
-    }
-    logData("Error: Battery characteristic not found.");
-  }
-    else
-  {
-    logData("Unexpected characteristics battery status: " + obj.status);
-  }
-  disconnectDevice();
-}
-
-function characteristicsBatteryError(obj)
-{
-  logData("Characteristics battery error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
 }
 
 /***********************/
@@ -577,14 +394,7 @@ function readSuccess(obj)
     {
         var bytes = bluetoothle.encodedStringToBytes(obj.value);
         logData("read humidity: bytes[0]:" + bytes[0]);
-        logData("read humidity: bytes:" + bytes);
         disconnectDevice();
-        /*
-        logData("Subscribing to heart rate for 5 seconds");
-        var paramsObj = {"serviceUuid":heartRateServiceUuid, "characteristicUuid":heartRateMeasurementCharacteristicUuid};
-        bluetoothle.subscribe(subscribeSuccess, subscribeError, paramsObj);
-        setTimeout(unsubscribeDevice, 5000);
-        */
     }
     else
   {
