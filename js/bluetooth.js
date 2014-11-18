@@ -13,7 +13,9 @@ var Device_iPad = "iPad";
 var Device_iPhone = "iPhone";
 var Device_Android = "Android";
 
-var SM = "";
+var scanIteration = -1;
+var RESCAN_SLEEP_DURATION = 2000; /* wait 2 seconds */
+var MAX_RESCAN_ITERATIONS = 5;
 
 function logData(message)
 {
@@ -23,8 +25,24 @@ function logData(message)
 
 function scanForDevices()
 {
-    var paramsObj = {"serviceUuids":[]};
-    bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
+    scanIteration++;
+    
+    if (scanIteration < MAX_RESCAN_ITERATIONS)
+    {
+        logData("Starting scan for BLE devices: Iteration '" + scanIteration + "'");
+        var paramsObj = {"serviceUuids":[]};
+        bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
+    }
+    else
+    {
+        logData("Reached maximum rescan iterations. BLE shutting down");
+    }
+}
+
+function rescanForDevices()
+{
+    logData("Operation complete. Sleeping for '" + RESCAN_SLEEP_DURATION + "' ms");
+    window.setTimeout(scanForDevices(), RESCAN_SLEEP_DURATION);
 }
 
 /*------------------*/
@@ -43,7 +61,7 @@ function initializeSuccess(obj)
         var address = window.localStorage.getItem(addressKey);
         if (address == null)
         {
-            logData("Bluetooth initialized successfully. Starting scan for BLE devices");
+            logData("Bluetooth initialized successfully");
             scanForDevices();
         }
         else
@@ -65,6 +83,7 @@ function initializeSuccess(obj)
 function startScanError(obj)
 {
     logData("Start scan error: " + obj.error + " - " + obj.message);
+    rescanForDevices();
 }
 
 function startScanSuccess(obj)
@@ -91,6 +110,7 @@ function startScanSuccess(obj)
     else
     {
         logData("Unexpected start scan status: " + obj.status);
+        rescanForDevices();
     }
 }
 
@@ -111,6 +131,7 @@ function connectDevice(address)
 function connectTimeout()
 {
     logData("Connection timed out");
+    rescanForDevices();
 }
 
 
@@ -121,6 +142,7 @@ function connectTimeout()
 function stopScanError(obj)
 {
     logData("Stop scan error: " + obj.error + " - " + obj.message);
+    rescanForDevices();
 }
 
 function stopScanSuccess(obj)
@@ -133,6 +155,7 @@ function stopScanSuccess(obj)
     {
         logData("Unexpected stop scan status: " + obj.status);
     }
+    rescanForDevices();
 }
 
 
@@ -144,6 +167,7 @@ function connectError(obj)
 {
     logData("Connect error: " + obj.error + " - " + obj.message);
     clearConnectTimeout();
+    rescanForDevices();
 }
 
 function connectSuccess(obj)
@@ -168,6 +192,7 @@ function connectSuccess(obj)
         else
         {
             logData("Unexpected connect status: " + obj.status);
+            rescanForDevices();
         }
     }
 }
@@ -186,7 +211,7 @@ function exploreService()
     {
         logData("iOS services discovering - attempting");
         var paramsObj = {"serviceUuids":[]};
-        bluetoothle.services(servicesHumiditySuccess, servicesHumidityError, paramsObj);
+        bluetoothle.services(servicesSuccess, servicesError, paramsObj);
     }
     else if (deviceType == Device_Android)
     {
@@ -195,21 +220,19 @@ function exploreService()
     }
 }
 
-/******************/
-/** CUSTOM - iOS **/
-/******************/
 
-/**************/
-/** SERVICES **/
-/**************/
+/*----------------------*/
+/*    SERVICES (iOS)    */
+/*----------------------*/
 
-function servicesHumidityError(obj)
+function servicesError(obj)
 {
     logData("Services discovery failure: " + obj.error + " - " + obj.message);
     disconnectDevice();
+    rescanForDevices();
 }
 
-function servicesHumiditySuccess(obj)
+function servicesSuccess(obj)
 {
     logData("iOS services discovering - success");
     if (obj.status == "discoveredServices")
@@ -225,71 +248,73 @@ function servicesHumiditySuccess(obj)
             {
                 logData("Device has desired service: " + serviceUuid);
                 var paramsObj = {"serviceUuid":serviceUuid, "characteristicUuids":[]};
-                bluetoothle.characteristics(characteristicsHumiditySuccess, characteristicsHumidityError, paramsObj);
+                bluetoothle.characteristics(characteristicsSuccess, characteristicsError, paramsObj);
                 return;
             }
         }
         
         logData("Error: humidity service not found");
+        disconnectDevice();
+        rescanForDevices();
     }
     else
     {
         logData("Unexpected services status: " + obj.status);
     }
     disconnectDevice();
+    rescanForDevices();
 }
 
 
+/*-----------------------------*/
+/*    CHARACTERISTICS (iOS)    */
+/*-----------------------------*/
 
-/***********/
-/** CHARS **/
-/***********/
-
-function characteristicsHumiditySuccess(obj)
+function characteristicsError(obj)
 {
-  if (obj.status == "discoveredCharacteristics")
-  {
-    var characteristics = obj.characteristics;
-    for (var i = 0; i < characteristics.length; i++)
+    logData("Characteristics discovery error: " + obj.error + " - " + obj.message);
+    disconnectDevice();
+    rescanForDevices();
+}
+
+function characteristicsSuccess(obj)
+{
+    if (obj.status == "discoveredCharacteristics")
     {
-      var characteristicUuid = characteristics[i].characteristicUuid;
+        var characteristics = obj.characteristics;
+        for (var i = 0; i < characteristics.length; i++)
+        {
+            var characteristicUuid = characteristics[i].characteristicUuid;
 
-      logData("Characteristic " + i + ": UUID = " + characteristicUuid);
+            //logData("Characteristic " + i + ": UUID = " + characteristicUuid);
         
-      if (characteristicUuid == humidityEnablingCharacteristicUuid)
-      {
-          logData("Service has desired characteristic: " + characteristicUuid);
-          enableHumiditySensorAndRead();
-          return;
-      }
+            if (characteristicUuid == humidityEnablingCharacteristicUuid)
+            {
+                logData("Service has desired characteristic: " + characteristicUuid);
+                enableHumiditySensorAndRead();
+                return;
+            }
+        }
+        logData("Error: humidity measurement characteristic not found.");
     }
-    logData("Error: humidity measurement characteristic not found.");
-  }
     else
-  {
-    logData("Unexpected characteristics status: " + obj.status);
-  }
-  disconnectDevice();
+    {
+        logData("Unexpected characteristics status: " + obj.status);
+    }
+    disconnectDevice();
+    rescanForDevices();
 }
 
-function characteristicsHumidityError(obj)
-{
-  logData("Characteristics discovery error: " + obj.error + " - " + obj.message);
-  disconnectDevice();
-}
 
-/***********************/
-/****** ANDROID ********/
-/***********************/
-
-/*----------------*/
-/*    DISCOVER    */
-/*----------------*/
+/*--------------------------*/
+/*    DISCOVER (Android)    */
+/*--------------------------*/
 
 function discoverError(obj)
 {
     logData("Discover error: " + obj.error + " - " + obj.message);
     disconnectDevice();
+    rescanForDevices();
 }
 
 function discoverSuccess(obj)
@@ -303,6 +328,7 @@ function discoverSuccess(obj)
     {
         logData("Unexpected discover status: " + obj.status);
         disconnectDevice();
+        rescanForDevices();
     }
 }
 
@@ -313,41 +339,38 @@ function discoverSuccess(obj)
 function enableHumiditySensorAndRead()
 {
     logData("Enabling humidity sensor");
-    var str = bluetoothle.bytesToEncodedString([0x01]);
-    logData("str = " + str);
-    var paramsObj = {"value":str, "serviceUuid":humidityServiceUuid, "characteristicUuid":humidityEnablingCharacteristicUuid};
-    bluetoothle.write(enableHumiditySensorWriteSuccess, enableHumiditySensorWriteError, paramsObj);
+    var paramsObj = {"value":bluetoothle.bytesToEncodedString([0x01]), "serviceUuid":humidityServiceUuid, "characteristicUuid":humidityEnablingCharacteristicUuid};
+    bluetoothle.write(writeSuccess, writeError, paramsObj);
 }
 
-function enableHumiditySensorWriteSuccess(obj)
+
+/*-------------*/
+/*    WRITE    */
+/*-------------*/
+
+function writeError(obj)
+{
+    logData("Write error: " + obj.error + " - " + obj.message);
+    disconnectDevice();
+    rescanForDevices();
+}
+
+function writeSuccess(obj)
 {
     if (obj.status == "written")
     {
         logData("Write successful");
-        readHumidity();
+        
+        logData("Reading humidity");
+        var paramsObj = {"serviceUuid":humidityServiceUuid, "characteristicUuid":humidityReadingCharacteristicUuid};
+        bluetoothle.read(readSuccess, readError, paramsObj);
     }
     else 
     {
         logData("Unexpected read status: " + obj.status);
         disconnectDevice();
+        rescanForDevices();
     }
-}
-
-function enableHumiditySensorWriteError(obj)
-{
-    logData("Write error: " + obj.error + " - " + obj.message);
-    disconnectDevice();
-}
-
-/*******************/
-/** READ HUMIDITY **/
-/*******************/
-
-function readHumidity()
-{    
-    logData("Reading humidity");
-    var paramsObj = {"serviceUuid":humidityServiceUuid, "characteristicUuid":humidityReadingCharacteristicUuid};
-    bluetoothle.read(readSuccess, readError, paramsObj);
 }
 
 
@@ -359,6 +382,7 @@ function readError(obj)
 {
     logData("Read error: " + obj.error + " - " + obj.message);
     disconnectDevice();
+    rescanForDevices();
 }
 
 function readSuccess(obj)
@@ -367,13 +391,13 @@ function readSuccess(obj)
     {
         var bytes = bluetoothle.encodedStringToBytes(obj.value);
         logData("read humidity: bytes[0]:" + bytes[0]);
-        disconnectDevice();
     }
     else
     {
         logData("Unexpected read status: " + obj.status);
-        disconnectDevice();
     }
+    disconnectDevice();
+    rescanForDevices();
 }
 
 function disconnectDevice()
@@ -389,6 +413,7 @@ function disconnectDevice()
 function disconnectError(obj)
 {
     logData("Disconnect error: " + obj.error + " - " + obj.message);
+    rescanForDevices();
 }
 
 function disconnectSuccess(obj)
@@ -405,6 +430,7 @@ function disconnectSuccess(obj)
     else
     {
         logData("Unexpected disconnect status: " + obj.status);
+        rescanForDevices();
     }
 }
 
@@ -416,6 +442,7 @@ function disconnectSuccess(obj)
 function closeError(obj)
 {
     logData("Close error: " + obj.error + " - " + obj.message);
+    rescanForDevices();
 }
 
 function closeSuccess(obj)
@@ -428,4 +455,5 @@ function closeSuccess(obj)
     {
         logData("Unexpected close status: " + obj.status);
     }
+    rescanForDevices();
 }
