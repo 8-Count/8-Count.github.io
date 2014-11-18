@@ -277,7 +277,7 @@ function servicesHumiditySuccess(obj)
 
       logData("Service " + i + ": UUID = " + serviceUuid);
       
-      if (serviceUuid == humidityServiceUuid)
+      if (serviceUuid === humidityServiceUuid)
       {
         logData("Device has desired service: " + serviceUuid + ". @TODO: Search for characteristics");   
       }
