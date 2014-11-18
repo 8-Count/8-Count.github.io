@@ -574,11 +574,11 @@ function discoverError(obj)
 function enableHumiditySensorAndRead()
 {
     logData("Enabling humidity sensor");
-    var k = new Uint8Array(1);
-    k[0] = 1;
-    var str = bluetoothle.bytesToEncodedString(k);
+    /*var k = new Uint8Array(1);
+    k[0] = 1;*/
+    var str = bluetoothle.bytesToEncodedString([0x01]);
     logData("str = " + str);
-    var paramsObj = {"value":"", "serviceUiud":humidityServiceUuid, "charactisticUiud":humidityEnablingCharacteristicUiud};
+    var paramsObj = {"value":str, "serviceUuid":humidityServiceUuid, "charactisticUuid":humidityEnablingCharacteristicUuid};
     bluetoothle.write(enableHumiditySensorWriteSuccess, enableHumiditySensorWriteError, paramsObj);
 }
 
