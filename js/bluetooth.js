@@ -22,8 +22,8 @@ var SM = "";
 
 function logData(message)
 {
-    SM = SM + message + "\n" + "----------" + "\n";
-    alert(SM);
+    document.getElementById("connection_log").innerHTML = 
+        message + "<br />" + document.getElementById("connection_log").innerHTML;
 }
 
 function initializeSuccess(obj)
