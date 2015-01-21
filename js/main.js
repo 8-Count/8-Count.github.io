@@ -6,5 +6,5 @@ $(document).ready(function() {
     updateTimeElapsed();
     setInterval(updateTimeElapsed, 999);
     setConnectionStatus("not connected");
-    window.setTimeout(bluetoothle.initialize(initializeSuccess, initializeError); 999);
+    bluetoothle.initialize(initializeSuccess, initializeError);
 });
